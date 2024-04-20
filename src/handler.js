@@ -8,7 +8,7 @@ const addNoteHandler = (req, h) => {
     const { title, tags, body } = req.payload;
 
     const id = nanoid(16); // generate a random unique string
-    const createdAt = new Date().toISOString();
+    const createdAt = new Date().toISOString(); // fill with current date
     const updatedAt = createdAt;
 
     const newNote = { id, title, createdAt, updatedAt, tags, body };
@@ -47,7 +47,30 @@ const getAllNotesHandler = () => {
     }
 }
 
+const getNoteByIdHandler = (req, h) => {
+    const { id } = req.params;
+
+    const note = notes.filter(note => note.id === id)[0];
+
+    if (note !== undefined) 
+        return {
+            status: 'success',
+            data: {
+                note
+            }
+        }
+
+    const response = h.response({
+        status: 'fail',
+        message: 'Catatan tidak ditemukan'
+    });
+
+    response.code(404);
+    return response;
+}
+
 module.exports = {
     addNoteHandler,
-    getAllNotesHandler
+    getAllNotesHandler,
+    getNoteByIdHandler
 }
